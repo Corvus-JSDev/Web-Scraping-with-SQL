@@ -26,8 +26,9 @@ def extract(source):
 	value = extractor.extract(source)["tours"]
 
 	if value != "No upcoming tours":
-		value = [item.strip() for item in value.split(",")]
-		return value  # ['Band', 'Location', 'D.M.YYYY']
+		string_value = value
+		array_value = [item.strip() for item in value.split(",")]
+		return {"string_value": string_value, "array_value": array_value}
 
 	return value.lower()  # "no upcoming tours"
 
@@ -55,9 +56,12 @@ if __name__ == "__main__":
 	extract = extract(scraper)
 	print(extract)
 
+	with open("data.txt", "r") as file:
+		file_contents = file.read()
+
 	if extract != "no upcoming tours":
-		if extract not in "data.txt":
-			store_data(extract)
+		if extract["string_value"] not in file_contents:
+			store_data(extract["string_value"])
 			send_email(extract)
 
 
