@@ -1,3 +1,4 @@
+from pprint import pp
 import requests
 import selectorlib
 import smtplib, ssl
@@ -32,7 +33,14 @@ def extract(source):
 	if value != "No upcoming tours":
 		string_value = value
 		array_value = [item.strip() for item in value.split(",")]
+		array_value = {
+			"band": array_value[0],
+			"location": array_value[1],
+			"date": array_value[2]
+		}
+		# The reason for having a string value is for saving data, and the array value is to have control over formatting to make it look pretty when sending the email.
 		return {"string_value": string_value, "array_value": array_value}
+
 
 	return value.lower()  # "no upcoming tours"
 
@@ -44,9 +52,9 @@ EMAIL_PW = os.getenv("EMAIL_PW")
 def send_email(message):
 	msg = EmailMessage()
 	msg['Subject'] = "New Music Event!"
-	msg.set_content("There has been a new event detected.")
 	msg['From'] = EMAIL_USR
 	msg['To'] = EMAIL_USR
+	msg.set_content(f"There has been a new event detected.\n\n{message['band']} is playing in {message['location']} on {message['date']}")
 
 	with smtplib.SMTP("smtp.gmail.com", 587) as gmail:
 		gmail.ehlo()
@@ -59,9 +67,11 @@ def send_email(message):
 
 
 
+
 if __name__ == "__main__":
 	scraper = scrape(URL)
 	extract = extract(scraper)
+	pp(extract)
 
 	# Read the contents of the data file
 	with open("data.txt", "r") as file:
@@ -72,7 +82,7 @@ if __name__ == "__main__":
 		with open("data.txt", "a") as file:
 			file.write(f"{extract['string_value']}\n")
 
-		send_email(extract["string_value"])
+		send_email(extract["array_value"])
 
 
 
