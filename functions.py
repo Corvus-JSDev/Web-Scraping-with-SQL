@@ -1,5 +1,6 @@
 import requests
 import selectorlib
+URL = "https://programmer100.pythonanywhere.com/tours/"
 
 # Pretending to be a browser
 HEADER = {
@@ -15,3 +16,23 @@ def scrape(url):
 
 	except requests.RequestException as err:
 		print(f'ERROR: {err}')
+		
+
+
+def extract(source):
+	extractor = selectorlib.Extractor.from_yaml_file("source.yaml")
+	value = extractor.extract(source)["tours"]
+	return value
+
+
+if __name__ == "__main__":
+	scraper = scrape(URL)
+	extract = extract(scraper)
+	print(extract)
+
+
+
+
+
+
+
