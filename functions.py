@@ -20,6 +20,8 @@ def scrape(url):
 
 
 def extract(source):
+	"""Extract data from a source file"""
+
 	extractor = selectorlib.Extractor.from_yaml_file("source.yaml")
 	value = extractor.extract(source)["tours"]
 
@@ -32,7 +34,18 @@ def extract(source):
 
 
 def send_email(message):
+	"""Send an email"""
+
 	print("Email Sent")
+
+
+
+def store_data(data):
+	"""Append data to the data.txt file"""
+
+	with open("data.txt", "a") as file:
+		file.write(data + "\n")
+
 
 
 
@@ -44,6 +57,7 @@ if __name__ == "__main__":
 
 	if extract != "no upcoming tours":
 		if extract not in "data.txt":
+			store_data(extract)
 			send_email(extract)
 
 
