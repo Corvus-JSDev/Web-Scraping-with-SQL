@@ -43,7 +43,8 @@ if __name__ == "__main__":
 	print(extract)
 
 	if extract != "no upcoming tours":
-		send_email(extract)
+		if extract not in "data.txt":
+			send_email(extract)
 
 
 
