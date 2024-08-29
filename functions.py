@@ -41,28 +41,21 @@ def send_email(message):
 
 
 
-def store_data(data):
-	"""Append data to the data.txt file"""
-
-	with open("data.txt", "a") as file:
-		file.write(data + "\n")
-
-
-
-
 
 if __name__ == "__main__":
 	scraper = scrape(URL)
 	extract = extract(scraper)
-	print(extract)
 
+	# Read the contents of the data file
 	with open("data.txt", "r") as file:
 		file_contents = file.read()
 
-	if extract != "no upcoming tours":
-		if extract["string_value"] not in file_contents:
-			store_data(extract["string_value"])
-			send_email(extract)
+	if extract != "no upcoming tours" and extract["string_value"] not in file_contents:
+		# Store the data in a file, so you don't get two emails for the same event
+		with open("data.txt", "a") as file:
+			file.write(f"{extract['string_value']}\n")
+
+		send_email(extract)
 
 
 
