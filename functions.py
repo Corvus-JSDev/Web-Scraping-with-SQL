@@ -27,7 +27,13 @@ def extract(source):
 		value = [item.strip() for item in value.split(",")]
 		return value  # ['Band', 'Location', 'D.M.YYYY']
 
-	return value  # "No upcoming tours"
+	return value.lower()  # "no upcoming tours"
+
+
+
+def send_email(message):
+	print("Email Sent")
+
 
 
 
@@ -35,6 +41,12 @@ if __name__ == "__main__":
 	scraper = scrape(URL)
 	extract = extract(scraper)
 	print(extract)
+
+	if extract != "no upcoming tours":
+		send_email(extract)
+
+
+
 
 
 
