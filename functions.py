@@ -1,5 +1,9 @@
 import requests
 import selectorlib
+import smtplib, ssl
+import os
+from email.message import EmailMessage
+from dotenv import load_dotenv
 URL = "https://programmer100.pythonanywhere.com/tours/"
 
 # Pretending to be a browser
@@ -34,10 +38,23 @@ def extract(source):
 
 
 
+load_dotenv()
+EMAIL_USR = os.getenv("EMAIL_USR")
+EMAIL_PW = os.getenv("EMAIL_PW")
 def send_email(message):
-	"""Send an email"""
+	msg = EmailMessage()
+	msg['Subject'] = "New Music Event!"
+	msg.set_content("There has been a new event detected.")
+	msg['From'] = EMAIL_USR
+	msg['To'] = EMAIL_USR
 
-	print("Email Sent")
+	with smtplib.SMTP("smtp.gmail.com", 587) as gmail:
+		gmail.ehlo()
+		gmail.starttls()
+		gmail.login(EMAIL_USR, EMAIL_PW)
+		gmail.sendmail(EMAIL_USR, EMAIL_USR, msg.as_string())
+
+	print(f"Email sent: {message}")
 
 
 
@@ -55,7 +72,7 @@ if __name__ == "__main__":
 		with open("data.txt", "a") as file:
 			file.write(f"{extract['string_value']}\n")
 
-		send_email(extract)
+		send_email(extract["string_value"])
 
 
 
