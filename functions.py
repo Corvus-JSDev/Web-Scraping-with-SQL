@@ -22,7 +22,13 @@ def scrape(url):
 def extract(source):
 	extractor = selectorlib.Extractor.from_yaml_file("source.yaml")
 	value = extractor.extract(source)["tours"]
-	return value
+
+	if value != "No upcoming tours":
+		value = [item.strip() for item in value.split(",")]
+		return value  # ['Band', 'Location', 'D.M.YYYY']
+
+	return value  # "No upcoming tours"
+
 
 
 if __name__ == "__main__":
