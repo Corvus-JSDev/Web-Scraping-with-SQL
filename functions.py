@@ -21,7 +21,7 @@ def scrape(url):
 
 	except requests.RequestException as err:
 		print(f'ERROR: {err}')
-		
+
 
 
 def extract(source):
@@ -33,13 +33,13 @@ def extract(source):
 	if value != "No upcoming tours":
 		string_value = value
 		array_value = [item.strip() for item in value.split(",")]
-		array_value = {
+		obj_value = {
 			"band": array_value[0],
 			"location": array_value[1],
 			"date": array_value[2]
 		}
 		# The reason for having a string value is for saving data, and the array value is to have control over formatting to make it look pretty when sending the email.
-		return {"string_value": string_value, "array_value": array_value}
+		return {"string_value": string_value, "array_value": array_value, "obj_value": obj_value}
 
 
 	return value.lower()  # "no upcoming tours"
@@ -82,7 +82,7 @@ if __name__ == "__main__":
 		with open("data.txt", "a") as file:
 			file.write(f"{extract['string_value']}\n")
 
-		send_email(extract["array_value"])
+		send_email(extract["obj_value"])
 
 
 
