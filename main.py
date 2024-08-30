@@ -1,19 +1,31 @@
 from pprint import pp
 from functions import *
+import sqlite3 as sql
 
 URL = "https://programmer100.pythonanywhere.com/tours/"
 
 scraper = scrape(URL)
 extract = extract(scraper)
-pp(extract)
 
-# Read the contents of the data file
-with open("data.txt", "r") as file:
-	file_contents = file.read()
 
-if extract != "no upcoming tours" and extract["string_value"] not in file_contents:
-	# Store the data in a file, so you don't get two emails for the same event
-	with open("data.txt", "a") as file:
-		file.write(f"{extract['string_value']}\n")
+if extract != "no upcoming tours":
+	connection = sql.connect("SQL_Database.db")
+	cursor = connection.cursor()
+	band, location, date = extract["array_value"]
 
-	send_email(extract["array_value"])
+	# Read the contents of the database and find if there is a matching row
+	cursor.execute("SELECT * FROM events WHERE band=? AND location=? AND date=?", (band, location, date))
+	sql_data = cursor.fetchall()
+
+	if sql_data == []:
+		# Write to the db, so you don't get two emails for the same event
+		cursor.execute("INSERT INTO events VALUES(?,?,?)", (band, location, date))
+		connection.commit()
+
+		send_email(extract["obj_value"])
+
+	else:
+		print("An alert for this event has already been sent.")
+
+else:
+	print("No Upcoming Tours :(")

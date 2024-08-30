@@ -82,7 +82,7 @@ if __name__ == "__main__":
 		with open("data.txt", "a") as file:
 			file.write(f"{extract['string_value']}\n")
 
-		send_email(extract["obj_value"])
+		# send_email(extract["obj_value"])
 
 
 
